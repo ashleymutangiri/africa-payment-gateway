@@ -1,3 +1,3 @@
 # Payment gateway setup
 
-Supposed to be africa's paymebt gateway for all methods
+Supposed to be africa's payment gateway for all methods
