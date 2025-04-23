@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ReceiptGenerator } from "./receipt-generator"
+import { CountryFlag } from "./country-flag"
+import { CardIcon } from "./card-icon"
 
 // Mobile money providers by country
 const mobileMoneyProviders = {
@@ -43,10 +45,30 @@ export default function PaymentGateway() {
   })
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null)
   const [transactionId, setTransactionId] = useState<string | null>(null)
+  const [isGlowing, setIsGlowing] = useState(false)
+
+  // Format card number in groups of 4
+  const formatCardNumber = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "")
+    const groups = []
+
+    for (let i = 0; i < cleanValue.length; i += 4) {
+      groups.push(cleanValue.slice(i, i + 4))
+    }
+
+    return groups.join(" ")
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
-    setFormData({ ...formData, [id]: value })
+
+    if (id === "cardNumber") {
+      // Format card number in groups of 4
+      const formattedValue = formatCardNumber(value)
+      setFormData({ ...formData, [id]: formattedValue })
+    } else {
+      setFormData({ ...formData, [id]: value })
+    }
   }
 
   // Update the handleSelectChange function to handle country code autocomplete
@@ -73,16 +95,19 @@ export default function PaymentGateway() {
 
   const handleNextStep = () => {
     setStep(step + 1)
+    triggerGlowEffect()
   }
 
   const handlePrevStep = () => {
     setStep(step - 1)
+    triggerGlowEffect()
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     // Move to confirmation step
     setStep(4)
+    triggerGlowEffect()
   }
 
   const handleConfirmPayment = async () => {
@@ -95,13 +120,23 @@ export default function PaymentGateway() {
 
     // Mock successful payment
     setStep(5)
+    triggerGlowEffect()
+  }
+
+  const triggerGlowEffect = () => {
+    setIsGlowing(true)
+    setTimeout(() => setIsGlowing(false), 2000)
   }
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Payment Gateway</CardTitle>
-        <CardDescription>Complete your payment securely</CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Payment Gateway</CardTitle>
+            <CardDescription>Complete your payment securely</CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Progress Slider */}
@@ -124,9 +159,9 @@ export default function PaymentGateway() {
               </div>
             ))}
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div className={`w-full bg-gray-200 rounded-full h-2.5 ${isGlowing ? "progress-glow" : ""}`}>
             <div
-              className="bg-primary h-2.5 rounded-full transition-all duration-300"
+              className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
               style={{ width: `${(step - 1) * 25}%` }}
             ></div>
           </div>
@@ -142,9 +177,24 @@ export default function PaymentGateway() {
                   <SelectValue placeholder="Select your country" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Zimbabwe">Zimbabwe</SelectItem>
-                  <SelectItem value="Zambia">Zambia</SelectItem>
-                  <SelectItem value="South Africa">South Africa</SelectItem>
+                  <SelectItem value="Zimbabwe">
+                    <div className="flex items-center">
+                      <CountryFlag country="Zimbabwe" />
+                      Zimbabwe
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Zambia">
+                    <div className="flex items-center">
+                      <CountryFlag country="Zambia" />
+                      Zambia
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="South Africa">
+                    <div className="flex items-center">
+                      <CountryFlag country="South Africa" />
+                      South Africa
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -234,12 +284,18 @@ export default function PaymentGateway() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="cardNumber">Card Number</Label>
-                  <Input
-                    id="cardNumber"
-                    placeholder="Enter card number"
-                    value={formData.cardNumber}
-                    onChange={handleInputChange}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="cardNumber"
+                      placeholder="Enter card number"
+                      value={formData.cardNumber}
+                      onChange={handleInputChange}
+                      maxLength={19} // 16 digits + 3 spaces
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CardIcon cardNumber={formData.cardNumber} />
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
@@ -336,7 +392,12 @@ export default function PaymentGateway() {
                 <div className="font-medium">{formData.mobileNumber}</div>
 
                 <div className="text-gray-500">Country:</div>
-                <div className="font-medium">{formData.country}</div>
+                <div className="font-medium">
+                  <div className="flex items-center">
+                    <CountryFlag country={formData.country} />
+                    {formData.country}
+                  </div>
+                </div>
 
                 <div className="text-gray-500">Payment Method:</div>
                 <div className="font-medium">{formData.paymentMethod === "card" ? "Card Payment" : "Mobile Money"}</div>
@@ -347,8 +408,11 @@ export default function PaymentGateway() {
                     <div className="font-medium">{formData.cardName}</div>
 
                     <div className="text-gray-500">Card Number:</div>
-                    <div className="font-medium">
-                      {formData.cardNumber ? "xxxx-xxxx-xxxx-" + formData.cardNumber.slice(-4) : ""}
+                    <div className="font-medium flex items-center">
+                      {formData.cardNumber ? "xxxx xxxx xxxx " + formData.cardNumber.slice(-4) : ""}
+                      <span className="ml-2">
+                        <CardIcon cardNumber={formData.cardNumber} />
+                      </span>
                     </div>
 
                     <div className="text-gray-500">Expiry Date:</div>
