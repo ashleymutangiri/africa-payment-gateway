@@ -18,6 +18,18 @@ export function CountryFlag({ country }: { country: string }) {
           🇿🇦
         </span>
       )
+    case "United Kingdom":
+      return (
+        <span className="mr-2 text-lg" role="img" aria-label="United Kingdom flag">
+          🇬🇧
+        </span>
+      )
+    case "United States":
+      return (
+        <span className="mr-2 text-lg" role="img" aria-label="United States flag">
+          🇺🇸
+        </span>
+      )
     default:
       return null
   }

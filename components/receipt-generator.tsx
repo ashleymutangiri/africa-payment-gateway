@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 interface ReceiptGeneratorProps {
   paymentData: any
   receiptUrl?: string
+  onReceiptGenerated?: (url: string) => void
 }
 
-export function ReceiptGenerator({ paymentData, receiptUrl }: ReceiptGeneratorProps) {
+export function ReceiptGenerator({ paymentData, receiptUrl, onReceiptGenerated }: ReceiptGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(receiptUrl || null)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +32,9 @@ export function ReceiptGenerator({ paymentData, receiptUrl }: ReceiptGeneratorPr
 
       if (data.success) {
         setGeneratedUrl(data.url)
+        if (onReceiptGenerated) {
+          onReceiptGenerated(data.url)
+        }
       } else {
         setError(data.error || "Failed to generate receipt")
       }

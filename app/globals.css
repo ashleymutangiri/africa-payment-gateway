@@ -36,33 +36,33 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 0 0% 10%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 0 0% 12%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 0 0% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.4% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 0 0% 15%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 0 0% 15%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 142.1 70.6% 45.3%;
   }
 }
 
@@ -89,4 +89,98 @@
 
 .progress-glow {
   animation: glowAnimation 2s ease-in-out;
+}
+
+.dark .progress-glow {
+  animation: darkGlowAnimation 2s ease-in-out;
+}
+
+@keyframes darkGlowAnimation {
+  0% {
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.2);
+  }
+}
+
+.dark .card {
+  background: linear-gradient(145deg, hsl(0 0% 12%), hsl(0 0% 10%));
+}
+
+.dark .progress-bar {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+/* Fix for completed steps in dark mode */
+.dark .w-6.h-6.rounded-full.flex.items-center.justify-center.text-xs.bg-blue-600,
+.dark .bg-blue-600 {
+  background-color: #22c55e !important;
+}
+
+/* Force dark mode styles when .dark class is applied */
+.dark body {
+  background-color: hsl(0 0% 10%);
+  color: hsl(210 40% 98%);
+}
+
+/* Replace all blue with green in dark mode */
+.dark .text-blue-500,
+.dark .text-blue-600,
+.dark .text-blue-700 {
+  color: #22c55e !important;
+}
+
+.dark .bg-blue-500,
+.dark .bg-blue-600,
+.dark .bg-blue-700 {
+  background-color: #22c55e !important;
+}
+
+.dark .border-blue-500,
+.dark .border-blue-600,
+.dark .border-blue-700 {
+  border-color: #22c55e !important;
+}
+
+/* Add animation for the success checkmark */
+@keyframes checkmarkAnimation {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.checkmark-animation {
+  animation: checkmarkAnimation 0.5s ease-in-out forwards;
+}
+
+/* Add pulse animation for the success circle */
+@keyframes pulseAnimation {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.success-circle-animation {
+  animation: pulseAnimation 2s infinite;
 }
